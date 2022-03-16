@@ -114,3 +114,92 @@
     flex-direction: column;
   }
 }
+
+
+
+.container {
+  z-index: 1;
+  position: fixed;
+  height: 300px;
+  width: 40px;
+  padding: 0;
+  background: #333333;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+
+  button:not(:first-child) {
+    background: none;
+    cursor: pointer;
+    z-index: 3;
+    height: 35px;
+
+    &:hover {
+      background: #4B4B4B
+    }
+  }
+
+  button {
+    border: none;
+    width: 40px;
+  }
+}
+
+.menu {
+  cursor: grab;
+  background: #1CC5DC;
+  height: 25px;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.figures {
+  position: absolute;
+  left: 50px;
+  top: 45px;
+  width: 140px;
+  height: 40px;
+  background: #FFFFFF;
+  box-shadow: 0 0 4px #00000033;
+  padding: 15px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
+  flex-direction: column;
+
+  svg {
+    cursor: pointer;
+
+    &:hover {
+      path {
+        fill: #1CC5DC;
+      }
+    }
+  }
+}
+
+.f_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: self-end;
+  width: 100%;
+}
+
+.addLink::before {
+  height: 15px;
+  content: "";
+  border-bottom: 1px solid #888888;
+  width: 30px;
+  position: absolute;
+  left: 5px;
+  margin-top: 12.5px;
+}
+
+.width {
+  width: 1800px;
+}
