@@ -15,3 +15,9 @@ a {
   box-sizing: border-box;
 }
 
+#container-wrapper {
+  width:1205px;
+  height:805px;
+  background-color:white;
+  border:5px solid #7300ff;
+}
