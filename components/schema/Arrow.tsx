@@ -61,11 +61,11 @@ const Edge = ({...props}: EdgeType) => {
                         stroke={stroke}
                         dash={dash}
                     />}
-                <Path
-                    data={` M ${source.x},${source.y} A 100 100 0 1 1 ${source.x + 10},${source.y + 10}`}
-                    stroke={stroke}
-                    dash={dash}
-                />
+                {/*<Path*/}
+                {/*    data={` M ${source.x},${source.y} A 100 100 0 1 1 ${source.x + 10},${source.y + 10}`}*/}
+                {/*    stroke={stroke}*/}
+                {/*    dash={dash}*/}
+                {/*/>*/}
                 {/*<path d="M100,100 L4,2 0,4" />*/}
                 {/*<Path*/}
                 {/*    data={`M${source.x},${source.y}*/}
