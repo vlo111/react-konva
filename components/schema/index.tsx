@@ -168,7 +168,7 @@ const Schema: NextPage = ({nodes, links}: any) => {
         });
 
         const cloneArrows = _.cloneDeep(arrows).map((f: any) => {
-            if(same.some((s: any) => s.id === f.id )) {
+            if (same.some((s: any) => s.id === f.id)) {
                 f = same.filter((s: any) => s.id === f.id)[0]
             }
             return f;
@@ -197,9 +197,8 @@ const Schema: NextPage = ({nodes, links}: any) => {
             const ca = _.cloneDeep(arrows);
 
             const sameClone = ca.filter((a: any) => {
-                if ( a.source.id === source.id && a.target.id === orientedArrow.target.id ||
-                    a.source.id === orientedArrow.target.id && a.target.id === source.id)
-                {
+                if (a.source.id === source.id && a.target.id === orientedArrow.target.id ||
+                    a.source.id === orientedArrow.target.id && a.target.id === source.id) {
                     return a;
                 }
                 return null;
@@ -207,14 +206,14 @@ const Schema: NextPage = ({nodes, links}: any) => {
 
             if (sameClone.length < 1) {
                 const cloneArrows = _.cloneDeep(arrows).map((f: any) => {
-                    if(sameClone.some((s: any) => s.id === f.id )) {
+                    if (sameClone.some((s: any) => s.id === f.id)) {
                         f.same = null
                     }
                     return f;
                 })
 
                 setArrows(cloneArrows);
-             } else {
+            } else {
                 calcSameLinks(sameClone);
             }
 
@@ -226,6 +225,10 @@ const Schema: NextPage = ({nodes, links}: any) => {
             same: oriented ? oriented.same : null,
         });
     }
+
+    const isLinkMove = () =>
+        orientedArrow.status === STATUS.start
+        || orientedArrow.status === STATUS.move;
 
     //#endregion HELPERS
 
@@ -242,10 +245,7 @@ const Schema: NextPage = ({nodes, links}: any) => {
             )
         }
 
-        if (
-            orientedArrow.status === STATUS.start ||
-            orientedArrow.status === STATUS.move
-        ) {
+        if (isLinkMove()) {
             const position = StageUtil.getAbsolutePosition(event.currentTarget);
 
             if (position) {
@@ -512,9 +512,8 @@ const Schema: NextPage = ({nodes, links}: any) => {
                             rotation={orientedShape.rotation}
                         />}
 
-                        {orientedArrow.status === STATUS.start
-                            || orientedArrow.status === STATUS.move &&
-                            <Arrow key="orientedArrow" arrow={orientedArrow} dash={[4, 4]}/>
+                        {isLinkMove() &&
+                        <Arrow key="orientedArrow" arrow={orientedArrow} dash={[4, 4]}/>
                         }
                     </Group>
                 </Layer>
