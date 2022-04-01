@@ -1,6 +1,7 @@
-import {Arrow, Group, Path, TextPath} from "react-konva";
+import {Arrow, Group, Path, TextPath, Text, Line} from "react-konva";
 import React, {useRef, useState} from "react";
 import {Html} from "react-konva-utils";
+import Konva from "konva";
 
 type EdgeType = {
     arrow: {
@@ -17,7 +18,7 @@ type EdgeType = {
     dash?: [number, number]
 }
 
-const distance = ([x1, y1], [x2, y2]) => {
+const distance = ([x1, y1]: any, [x2, y2]: any) => {
     const dx = x1 - x2;
     const dy = y1 - y2;
     return Math.sqrt(dx * dx + dy * dy);
@@ -46,27 +47,53 @@ const Edge = ({...props}: EdgeType) => {
         arcDirection = same.arcDirection;
     }
 
+    const getAngle = (points: any) => {
+        const dx = points[2] - points[0];
+        const dy = points[3] - points[1];
+        const angle = Math.atan2(!itself ? dy : dy, !itself ? dx : dx - 500);
+        return Konva.Util.radToDeg(angle);
+    }
+
     return (
         <>
             <Group>
                 {!itself ?
-                    (!same ?
-                        <Arrow
-                            strokeWidth={2}
-                            {...data}
-                        /> :
-                        <Path
-                            data={`
+                    (
+
+                        <>
+                            {!same ?
+                                <Path
+                                    data={`
+                            M${source.x},${source.y}
+                            ${target.x},${target.y}`}
+                                    stroke={stroke}
+                                    dash={dash}
+                                /> :
+                                <Path
+                                    data={`
                             M${source.x},${source.y}
                             A${arc},${arc} 0 0,${arcDirection}
                             ${target.x},${target.y}`}
-                            stroke={stroke}
-                            dash={dash}
-                        />) :
+                                    stroke={stroke}
+                                    dash={dash}
+                                />}
+                            <Text
+                                x={target.x}
+                                y={target.y}
+                                text={'➤'}
+                                fill={stroke}
+                                fontSize={20}
+                                offsetY={17 / 2}
+                                offsetX={30 / 2}
+                                rotation={getAngle(data.points)}
+                            />
+                        </>
+
+                    ) :
                     <Path
                         data={`
                         M${itself.startX},${itself.startY}
-                        A ${80 + (itself.count * 25)} ${80 + (itself.count * 25)} 0 1 1
+                        A ${80 + (itself.count * 25)} ${80 + (itself.count * 25)} 10 1 1
                         ${itself.endX},${itself.startY}`}
                         stroke={stroke}
                         dash={dash}
