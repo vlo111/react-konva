@@ -25,7 +25,7 @@ const distance = ([x1, y1], [x2, y2]) => {
 
 const Edge = ({...props}: EdgeType) => {
 
-    let {arrow: {source, target, stroke, same}, dash = [0, 0]} = props;
+    let {arrow: {source, target, stroke, same, itself}, dash = [0, 0]} = props;
 
     const data = {
         points: [
@@ -49,23 +49,28 @@ const Edge = ({...props}: EdgeType) => {
     return (
         <>
             <Group>
-                {!same ?
-                    <Arrow
-                        strokeWidth={2}
-                        {...data}
-                    /> :
+                {!itself ?
+                    (!same ?
+                        <Arrow
+                            strokeWidth={2}
+                            {...data}
+                        /> :
+                        <Path
+                            data={`
+                            M${source.x},${source.y}
+                            A${arc},${arc} 0 0,${arcDirection}
+                            ${target.x},${target.y}`}
+                            stroke={stroke}
+                            dash={dash}
+                        />) :
                     <Path
-                        data={`M${source.x},${source.y}
-                        A${arc},${arc} 0 0,${arcDirection}
-                        ${target.x},${target.y}`}
+                        data={`
+                        M${itself.startX},${itself.startY}
+                        A ${80 + (itself.count * 25)} ${80 + (itself.count * 25)} 0 1 1
+                        ${itself.endX},${itself.startY}`}
                         stroke={stroke}
                         dash={dash}
                     />}
-                {/*<Path*/}
-                {/*    data={` M ${source.x},${source.y} A 100 100 0 1 1 ${source.x + 10},${source.y + 10}`}*/}
-                {/*    stroke={stroke}*/}
-                {/*    dash={dash}*/}
-                {/*/>*/}
                 {/*<path d="M100,100 L4,2 0,4" />*/}
                 {/*<Path*/}
                 {/*    data={`M${source.x},${source.y}*/}
@@ -74,18 +79,19 @@ const Edge = ({...props}: EdgeType) => {
                 {/*    stroke={stroke}*/}
                 {/*    dash={dash}*/}
                 {/*/>*/}
-                {/*<TextPath*/}
-                {/*    fill={data.stroke}*/}
-                {/*    fontSize={'24'}*/}
-                {/*    fontFamily={'Arial'}*/}
-                {/*    align='center'*/}
-                {/*    text={'Textpath - literally text on a path. Textpath - literally text on a path'}*/}
-                {/*    data={`M${source.x},${source.y}*/}
-                {/*        A${arc},${arc} 0 0,${arcDirection}*/}
-                {/*        ${target.x},${target.y}`}*/}
-                {/*    textBaseline={'bottom'}*/}
-                {/*    draggable*/}
-                {/*/>*/}
+                <TextPath
+                    fill={data.stroke}
+                    fontSize={'24'}
+                    fontFamily={'Arial'}
+                    align='center'
+                    text={'Textpath - literally text on a path'}
+                    data={`
+                        M${itself.startX},${itself.startY}
+                        A ${80 + (itself.count * 25)} ${80 + (itself.count * 25)} 0 1 1
+                        ${itself.endX},${itself.startY}`}
+                    textBaseline={'bottom'}
+                    draggable
+                />
                 {/*<TextPath*/}
                 {/*    fill={'red'}*/}
                 {/*    fontSize={'24'}*/}
