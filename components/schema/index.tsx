@@ -1,6 +1,6 @@
 import type {NextPage} from 'next'
 import {Group, Circle, Layer, TextPath} from "react-konva";
-import {useState} from "react";
+import React, {useState} from "react";
 import Shape from "./Shape";
 import styles from '../../styles/Home.module.scss'
 import Arrow from "./Arrow";
@@ -103,8 +103,9 @@ const Schema: NextPage = ({nodes, links}: any) => {
     };
 
     const overShapeStyle = (node: any) => {
-        const nodes: any = [].concat(circles);
-        const target: any = [].concat(node)[0]
+
+        const nodes: any = _.cloneDeep(circles);
+        const target: any = _.cloneDeep(node)
 
         target.strokeOver = '#498bfd'
         target.strokeWidth = 3
@@ -230,6 +231,37 @@ const Schema: NextPage = ({nodes, links}: any) => {
         orientedArrow.status === STATUS.start
         || orientedArrow.status === STATUS.move;
 
+    const isSelfLoop = (source: any, position: any) => {
+        const startX = source.x - 60;
+        const startY = source.y - 60;
+
+        const endX = source.x + 60;
+        const endY = source.y + 60;
+
+        // itself loop
+        if (position.x > startX && position.x < endX &&
+            position.y > startY && position.y < endY
+        ) {
+            setOrientedArrow({
+                ...orientedArrow, itself: {
+                    startX: source.x - 50,
+                    startY: source.y,
+                    endX: source.x + 50,
+                    count: arrows.filter(p => p.source.id ===orientedArrow.source.id && p.itself).length
+                }
+            })
+
+            overShapeStyle(source);
+
+            return true;
+        }
+        leaveShapeStyle();
+
+        return false;
+    }
+
+    const findCircle = (id: any) => circles.find((c: any) => c.id === id);
+
     //#endregion HELPERS
 
     //#region HANDLERS
@@ -246,46 +278,47 @@ const Schema: NextPage = ({nodes, links}: any) => {
         }
 
         if (isLinkMove()) {
+
             const position = StageUtil.getAbsolutePosition(event.currentTarget);
 
-            if (position) {
+            if (!position) return;
 
-                const source = circles.find((c: any) => c.id === orientedArrow.source.id);
+            const source = findCircle(orientedArrow.source.id);
 
-                const target = circles.find((c: any) => c.id === orientedArrow.target.id);
+            const target = findCircle(orientedArrow.target.id);
 
-                const update = updatePoints({
-                    source: {
-                        x: source.x,
-                        y: source.y
-                    },
-                    target: {
-                        x: target ? target.x : position.x,
-                        y: target ? target.y : position.y
-                    },
-                }, [OFFSET.default, orientedArrow.target.id ? OFFSET.default : OFFSET.initial]);
+            const outside = updatePoints({
+                source: {
+                    x: source.x,
+                    y: source.y
+                },
+                target: {
+                    x: target ? target.x : position.x,
+                    y: target ? target.y : position.y
+                },
+            }, [OFFSET.default, orientedArrow.target.id ? OFFSET.default : OFFSET.initial]);
 
-                const newOrientedArrow = {
-                    ...orientedArrow,
-                    source: {
-                        ...update.source,
-                        id: orientedArrow.source.id,
-                    },
-                    target: {
-                        ...update.target,
-                        id: orientedArrow.target.id,
-                    },
-                    status: STATUS.move,
-                }
+            if (isSelfLoop(source, position)) return;
 
-                if (target) {
-                    overShapeStyle(target);
+            const newOrientedArrow = {
+                ...orientedArrow,
+                source: {
+                    ...outside.source,
+                    id: orientedArrow.source.id,
+                },
+                target: {
+                    ...outside.target,
+                    id: orientedArrow.target.id,
+                },
+                status: STATUS.move,
+            }
 
-                    setOrientedArrow(newOrientedArrow)
-                } else {
-                    setOrientedArrow({...newOrientedArrow, same: null})
-                }
+            if (target) {
+                overShapeStyle(target);
 
+                setOrientedArrow({...newOrientedArrow, itself: false})
+            } else {
+                setOrientedArrow({...newOrientedArrow, same: null, itself: false})
             }
         }
     }
@@ -313,19 +346,19 @@ const Schema: NextPage = ({nodes, links}: any) => {
             if (orientedArrow.status !== STATUS.inactive)
                 setOrientedArrow({...orientedArrow, status: STATUS.inactive})
         } else {
-            const {target} = e;
+            const {target: evtTarget} = e;
 
             const {status} = orientedArrow;
 
             if (status === STATUS.active) {
 
-                const position = target.getAbsolutePosition()
+                const position = evtTarget.getAbsolutePosition()
 
                 setOrientedArrow({
                     id: uuidv4(),
                     source: {
                         ...position,
-                        id: target.id()
+                        id: evtTarget.id()
                     },
                     target: position,
                     status: STATUS.start,
@@ -334,18 +367,18 @@ const Schema: NextPage = ({nodes, links}: any) => {
 
             } else if (status === STATUS.move) {
 
-                const nodeSource = circles.find((c: any) => c.id === orientedArrow.source.id);
+                const source = circles.find((c: any) => c.id === orientedArrow.source.id);
 
-                const nodeTarget = circles.find((c: any) => c.id === target.id());
+                const target = circles.find((c: any) => c.id === evtTarget.id());
 
                 const update = updatePoints({
                     source: {
-                        x: nodeSource.x,
-                        y: nodeSource.y
+                        x: source.x,
+                        y: source.y
                     },
                     target: {
-                        x: nodeTarget.x,
-                        y: nodeTarget.y
+                        x: target.x,
+                        y: target.y
                     },
                 }, [OFFSET.default, OFFSET.default]);
 
@@ -357,12 +390,13 @@ const Schema: NextPage = ({nodes, links}: any) => {
                         y: update.source.y,
                     },
                     target: {
-                        id: target.id(),
+                        id: evtTarget.id(),
                         x: update.target.x,
                         y: update.target.y,
                     },
                     stroke: orientedArrow.stroke,
-                    same: orientedArrow.same
+                    same: orientedArrow.same,
+                    itself: orientedArrow.itself
                 }].concat(arrows);
 
                 setArrows(addLink);
@@ -370,7 +404,6 @@ const Schema: NextPage = ({nodes, links}: any) => {
                 setOrientedArrow({...orientedArrow, status: STATUS.inactive})
 
                 leaveShapeStyle();
-
             }
         }
 
@@ -382,11 +415,9 @@ const Schema: NextPage = ({nodes, links}: any) => {
     //#region SHAPE
 
     const overCircle = (e: any) => {
-        if (
-            (orientedArrow.status === STATUS.move) &&
+        if ((orientedArrow.status === STATUS.move) &&
             !orientedArrow.target.id &&
-            orientedArrow.source.id !== e.target.id()
-        ) {
+            orientedArrow.source.id !== e.target.id()) {
             const source = circles.find((c: any) => c.id === orientedArrow.source.id);
 
             const target = circles.find((c: any) => c.id === e.target.id());
@@ -402,6 +433,7 @@ const Schema: NextPage = ({nodes, links}: any) => {
 
             makeSameLinks(source, {...orientedArrow.target, id: null});
         }
+
         leaveShapeStyle();
     }
 
@@ -410,9 +442,9 @@ const Schema: NextPage = ({nodes, links}: any) => {
 
         arrows.forEach((l: any) => {
 
-            const source = circles.find((c: any) => c.id === l.source.id);
+            const source = findCircle(l.source.id);
 
-            const target = circles.find((c: any) => c.id === l.target.id);
+            const target = findCircle(l.target.id);
 
             const update = updatePoints({
                 source: {
@@ -433,6 +465,15 @@ const Schema: NextPage = ({nodes, links}: any) => {
                 l.target = {
                     ...l.target,
                     ...update.target
+                }
+            }
+
+            if (l.itself) {
+                l.itself = {
+                    ...l.itself,
+                    startX: update.source.x + 5,
+                    startY: update.source.y,
+                    endX:   update.source.x + 105,
                 }
             }
         })
@@ -512,9 +553,7 @@ const Schema: NextPage = ({nodes, links}: any) => {
                             rotation={orientedShape.rotation}
                         />}
 
-                        {isLinkMove() &&
-                        <Arrow key="orientedArrow" arrow={orientedArrow} dash={[4, 4]}/>
-                        }
+                        { isLinkMove() && <Arrow key="orientedArrow" arrow={orientedArrow} dash={[4, 4]}/> }
                     </Group>
                 </Layer>
             </KonvaStage>
