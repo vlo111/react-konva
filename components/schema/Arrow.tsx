@@ -79,19 +79,19 @@ const Edge = ({...props}: EdgeType) => {
                 {/*    stroke={stroke}*/}
                 {/*    dash={dash}*/}
                 {/*/>*/}
-                <TextPath
-                    fill={data.stroke}
-                    fontSize={'24'}
-                    fontFamily={'Arial'}
-                    align='center'
-                    text={'Textpath - literally text on a path'}
-                    data={`
-                        M${itself.startX},${itself.startY}
-                        A ${80 + (itself.count * 25)} ${80 + (itself.count * 25)} 0 1 1
-                        ${itself.endX},${itself.startY}`}
-                    textBaseline={'bottom'}
-                    draggable
-                />
+                {/*<TextPath*/}
+                {/*    fill={data.stroke}*/}
+                {/*    fontSize={'24'}*/}
+                {/*    fontFamily={'Arial'}*/}
+                {/*    align='center'*/}
+                {/*    text={'Textpath - literally text on a path'}*/}
+                {/*    data={`*/}
+                {/*        M${itself.startX},${itself.startY}*/}
+                {/*        A ${80 + (itself.count * 25)} ${80 + (itself.count * 25)} 0 1 1*/}
+                {/*        ${itself.endX},${itself.startY}`}*/}
+                {/*    textBaseline={'bottom'}*/}
+                {/*    draggable*/}
+                {/*/>*/}
                 {/*<TextPath*/}
                 {/*    fill={'red'}*/}
                 {/*    fontSize={'24'}*/}
