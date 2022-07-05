@@ -9,7 +9,7 @@ import Konva from "konva";
 
 const ToolBar: NextPage<any> = (
     {
-        orientedShape, setOrientedShape,
+        orientedShape, setDrawShape,
         setOrientedArrow,
     }: any) => {
 
@@ -28,7 +28,7 @@ const ToolBar: NextPage<any> = (
 
                         document.body.style.cursor = 'crosshair';
 
-                        setOrientedShape({
+                        setDrawShape({
                             ...orientedShape,
                             color: Konva.Util.getRandomColor(),
                             start: true,

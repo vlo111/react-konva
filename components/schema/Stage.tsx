@@ -1,5 +1,5 @@
 import type {NextPage} from 'next'
-import { Stage } from "react-konva";
+import {Layer, Stage} from "react-konva";
 
 const KonvaStage: NextPage<any> = ({children, ...props}: any) => {
 
@@ -9,7 +9,9 @@ const KonvaStage: NextPage<any> = ({children, ...props}: any) => {
                 height={800}
                 {...props}
             >
-                {children}
+                <Layer>
+                    {children}
+                </Layer>
             </Stage>
     )
 }
