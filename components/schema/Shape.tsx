@@ -2,11 +2,12 @@ import React, {useState} from "react";
 import {Circle, Group} from "react-konva";
 import Konva from "konva";
 import KonvaEventObject = Konva.KonvaEventObject;
+import Text from './Text'
+import { IEditable } from "../../types/schema";
 
 const Shape = ({
-                  shapeProps, ...handlers
+                   setEditable, editableText, shapeProps, ...handlers
               }: any) => {
-
     const shapeRef = React.useRef<any>();
 
     const props = (({ x, y, ...p }) => p)(shapeProps)
@@ -38,6 +39,16 @@ const Shape = ({
                     name="circle"
                     fill="white"
                     stroke={props.strokeOver ?? props.stroke}
+                />
+                <Text
+                    name={props.name}
+                    x={-35}
+                    y={-35}
+                    width={80}
+                    height={65}
+                    lineHeight={1.2}
+                    editableText={editableText}
+                    setEditable={setEditable}
                 />
             </Group>
         </React.Fragment>

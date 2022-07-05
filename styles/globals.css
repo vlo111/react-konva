@@ -21,3 +21,26 @@ a {
   background-color:white;
   border:5px solid #7300ff;
 }
+
+.editableContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.editableNode {
+  overflow-y:scroll;
+  overflow-x: hidden;
+  outline: none;
+  caret-color: #510ff3;
+}
+
+.editableNode::-webkit-scrollbar {
+  width: 0 !important
+}
+
+.editableNode:empty:before {
+  content: attr(data-placeholder);
+  color: #929292;
+}

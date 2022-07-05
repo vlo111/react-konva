@@ -113,7 +113,7 @@ const Edge = ({...props}: EdgeType) => {
                 {/*    align='center'*/}
                 {/*    text={'Textpath - literally text on a path'}*/}
                 {/*    data={`*/}
-                {/*        M${itself.startX},${itself.startY}*/}
+                {/*        M${itself.startX  },${itself.startY}*/}
                 {/*        A ${80 + (itself.count * 25)} ${80 + (itself.count * 25)} 0 1 1*/}
                 {/*        ${itself.endX},${itself.startY}`}*/}
                 {/*    textBaseline={'bottom'}*/}

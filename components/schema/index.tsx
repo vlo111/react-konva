@@ -60,6 +60,9 @@ const Schema: NextPage = ({nodes, links}: any) => {
     const [orientedShape, setOrientedShape] = useState<any>(InitOrientedShape);
 
     const [orientedArrow, setOrientedArrow] = useState<any>(InitOrientedArrow);
+
+    const [editableText, setEditableText] = useState<number>(0);
+
     //# endregion
 
     //#region HELPERS
@@ -314,6 +317,7 @@ const Schema: NextPage = ({nodes, links}: any) => {
             }
 
             if (target) {
+            console.log(target)
                 overShapeStyle(target);
 
                 setOrientedArrow({...newOrientedArrow, itself: false})
@@ -324,7 +328,7 @@ const Schema: NextPage = ({nodes, links}: any) => {
     }
 
     const clickStage = (e: Konva.KonvaEventObject<MouseEvent>) => {
-        // create node
+        // create shape
         if (orientedShape.start) {
             setOrientedShape({
                 ...InitOrientedShape,
@@ -339,9 +343,12 @@ const Schema: NextPage = ({nodes, links}: any) => {
                 color: orientedShape.color,
             });
             document.body.style.cursor = 'auto';
+
+            // add editable text item in shape
+            setEditableText("");
         }
 
-        // create link
+        // create connection
         if (e.target.name() !== 'circle') {
             if (orientedArrow.status !== STATUS.inactive)
                 setOrientedArrow({...orientedArrow, status: STATUS.inactive})
@@ -408,6 +415,11 @@ const Schema: NextPage = ({nodes, links}: any) => {
         }
 
         document.body.style.cursor = 'auto';
+
+        // disable editable text active in shape
+        if (e.target.nodeType === 'Stage') {
+            setEditableText(0);
+        }
     }
 
     //#endregion STAGE
@@ -484,7 +496,6 @@ const Schema: NextPage = ({nodes, links}: any) => {
     }
 
     const dragendCircle = (newAttrs: any, index: number) => {
-
         const circs = circles.slice();
 
         circs[index] = newAttrs;
@@ -527,6 +538,10 @@ const Schema: NextPage = ({nodes, links}: any) => {
                                 <Shape
                                     key={i}
                                     shapeProps={circle}
+                                    editableText={editableText}
+                                    setEditable={(value: number) => {
+                                        setEditableText(value);
+                                    }}
                                     onDragEnd={(newCircle: any) => dragendCircle(newCircle, i)}
                                     onDragMove={dragMoveCircle}
                                     onMouseEnter={overCircle}
