@@ -96,8 +96,11 @@ const Schema: NextPage = ({nodes, links}: any) => {
         target.strokeOver = '#498bfd'
         target.strokeWidth = 3
 
-        target.shadowBlur = 4;
-        target.shadowOpacity = 0.4;
+        target.shadowBlur = 20;
+        target.shadowOffsetX = 0;
+        target.shadowOffsetY = 14;
+
+        target.shadowOpacity = 0.1;
 
         nodes[nodes.findIndex((el: any) => el.id === node.id)] = target;
 
@@ -113,6 +116,8 @@ const Schema: NextPage = ({nodes, links}: any) => {
                 c.fillOver = null
                 c.strokeWidth = 2
                 c.shadowBlur = 0;
+                c.shadowOpacity = 1;
+                c.shadowOffsetY = 0;
             }
         })
 

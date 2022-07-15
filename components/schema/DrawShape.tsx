@@ -8,7 +8,7 @@ const DrawShape: NextPage<any> = ({ drawShape }: any) => {
             key={`drawShape${drawShape.id}`}
             x={drawShape.x}
             y={drawShape.y}
-            stroke={drawShape.color}
+            fill={drawShape.color}
             strokeWidth={2}
             radius={50}
             opacity={0.8}
